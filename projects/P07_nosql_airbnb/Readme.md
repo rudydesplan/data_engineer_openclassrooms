@@ -1,6 +1,6 @@
 ## P7 — NoSQL (NosCités) : requêtes, BI, réplication & sharding  
 **Titre :** *Concevez et analysez une base de données NoSQL*  
-**Repo :** `https://github.com/rudydesplan/P07_nosql_airbnb`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P07_nosql_airbnb`
 
 ### Contexte
 L’association NosCités exploite une base MongoDB sur les locations courte durée à Paris. Suite à un incident (crash / indisponibilité), la base doit être **restaurée** et surtout rendue **fiable** et **durable**. En parallèle, l’association a besoin d’analyses pour vérifier la cohérence des données (notamment en vue des **JO 2024**) et produire des statistiques exploitables via un outil BI. Le périmètre s’étend ensuite à une logique multi-sites (Paris + Lyon) avec **réplication** puis **sharding**.

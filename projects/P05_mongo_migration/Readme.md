@@ -1,6 +1,6 @@
 ## P5 — Migration de données médicales en NoSQL (MongoDB + Docker)  
 **Titre :** *Migrez des données médicales à l’aide du NoSQL*  
-**Repo :** `https://github.com/rudydesplan/P05_mongo_migration`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P05_mongo_migration`
 
 ### Contexte
 Une organisation doit migrer un dataset médical initialement fourni en **CSV** vers une base **NoSQL** afin de faciliter l’exploitation, la recherche et l’évolution du modèle. Les contraintes sont classiques “projet infra” : migration automatisée, contrôle qualité, sécurité (authentification + rôles), et surtout **reproductibilité** de l’installation pour pouvoir la livrer/relivrer facilement.

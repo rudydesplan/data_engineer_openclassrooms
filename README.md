@@ -2,7 +2,7 @@
 
 > **Objectif**  
 Ce dépôt sert de **vitrine** de mon parcours Data Engineer : il présente les projets réalisés (P2 à P13) sous forme de **page d’orientation**.  
-Chaque projet est documenté en détail dans son **dossier dédié** avec un `README.md` (contexte, objectif, démarche, outils, compétences, résultats, recul) ainsi que les livrables associés.
+Chaque projet est documenté en détail dans son **dossier dédié** avec un `README.md` (contexte, objectif, démarche, outils, compétences, résultats, recul) ainsi que la présentation.
 
 ---
 

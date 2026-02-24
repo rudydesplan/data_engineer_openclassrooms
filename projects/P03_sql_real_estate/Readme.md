@@ -1,6 +1,6 @@
 ## P3 — SQL & création de BDD (Laplace Immo)  
 **Titre :** *Entraînez-vous avec SQL et créez votre BDD* (Laplace Immo)  
-**Repo :** `https://github.com/rudydesplan/P03_sql_real_estate`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P03_sql_real_estate`
 
 ### Contexte
 Laplace Immo souhaite disposer d’un **POC** de base relationnelle pour analyser les transactions immobilières : évolution du **prix au m²**, volumes de ventes, comparaisons par zones géographiques, et indicateurs de marché. Les données proviennent de fichiers structurés qu’il faut **documenter**, **modéliser**, puis **interroger** de manière fiable.

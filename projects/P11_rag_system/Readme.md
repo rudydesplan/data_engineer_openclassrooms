@@ -1,6 +1,6 @@
 ## P11 — Concevoir & déployer un système RAG (LangChain + Mistral + FAISS)  
 **Titre :** *Concevez et déployez un système RAG*  
-**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/P11_rag_system` *(à remplacer)*
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P11_rag_system` *(à remplacer)*
 
 ### Contexte
 Mission en scénario professionnel : en tant qu’ingénieur data freelance, vous travaillez pour **Puls-Events**, une plateforme web de découverte d’événements culturels. L’entreprise veut tester l’intégration d’un **chatbot intelligent** capable de recommander des événements et de produire des réponses **augmentées** grâce à un système **RAG** connecté à une base vectorielle, à partir de données publiques **Open Agenda**. :contentReference[oaicite:0]{index=0}

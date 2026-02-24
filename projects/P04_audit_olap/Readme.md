@@ -1,6 +1,6 @@
 ## P4 — Audit d’un environnement de données (SuperSmartMarket)  
 **Titre :** *Auditez un environnement de données* (SuperSmartMarket)  
-**Repo :** `https://github.com/rudydesplan/P04_audit_olap`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P04_audit_olap`
 
 ### Contexte
 SuperSmartMarket dispose d’un environnement BI/OLAP alimentant des tableaux de bord (PowerBI). Des **incohérences de chiffre d’affaires (CA)** sont observées entre différentes vues/rapports, ce qui met en risque la prise de décision. La mission consiste à auditer l’écosystème (données + traitements + usages) pour **identifier l’origine probable** des écarts et proposer un plan de stabilisation.

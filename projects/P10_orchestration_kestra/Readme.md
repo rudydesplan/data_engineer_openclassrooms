@@ -1,6 +1,6 @@
 ## P10 — Orchestration des flux (Kestra) + data quality tests (BottleNeck)
 **Titre :** *Mettez en place un pipeline d’orchestration des flux* (Option B) :contentReference[oaicite:0]{index=0}  
-**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P10_orchestration_kestra` *(à remplacer)*
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P10_orchestration_kestra`
 
 ### Contexte
 Vous êtes Data Engineer chez **BottleNeck** (marchand de vin). Un data analyst (Stéphane) a déjà défini la démarche de nettoyage, réconciliation et analyse des données issues de 2 systèmes (**ERP** et **CMS**) + un fichier de liaison. Le besoin métier est récurrent : fournir **chaque mois** des rapports de chiffre d’affaires et des extractions de vins “premium” vs “ordinaires”. La DSI a choisi **Kestra** pour orchestrer l’automatisation et attend une démonstration au COPIL. :contentReference[oaicite:1]{index=1}

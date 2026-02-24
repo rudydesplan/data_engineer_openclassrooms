@@ -1,6 +1,6 @@
 ## P6 — Prédiction conso bâtiments + API (BentoML) + déploiement cloud  
 **Titre :** *Anticipez les besoins en consommation de bâtiments*  
-**Repo :** `https://github.com/rudydesplan/P06_energy_ml_api`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P06_energy_ml_api`
 
 ### Contexte
 La ville de Seattle cherche à mieux anticiper la **consommation énergétique** et les **émissions de CO₂** de bâtiments non résidentiels. Le besoin n’est pas seulement de produire un modèle ML : il faut le rendre **utilisable** par d’autres systèmes via une **API**, assurer la **reproductibilité** (conteneurisation), puis préparer un **déploiement cloud**.

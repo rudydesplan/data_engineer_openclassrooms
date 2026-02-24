@@ -1,6 +1,6 @@
 ## P2 — Analyse de données de systèmes éducatifs  
 **Titre :** *Analysez les données de systèmes éducatifs*  
-**Repo :** `https://github.com/rudydesplan/P02_education`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P02_education`
 
 ### Contexte
 Dans le cadre d’une mission d’exploration de données orientée “décision”, l’objectif est de partir de plusieurs fichiers d’indicateurs (éducation / développement), puis de construire une base d’analyse cohérente et exploitable. Le principal défi est la **multiplicité des indicateurs** (risque de redondance) et la **qualité hétérogène** des données (valeurs manquantes, formats, incohérences).

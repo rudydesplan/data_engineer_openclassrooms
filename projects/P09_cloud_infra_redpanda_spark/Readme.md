@@ -1,189 +1,101 @@
-------
+## P9 — Modéliser une infrastructure cloud + streaming (Redpanda) + PySpark  
+**Titre :** *Modélisez une infrastructure dans le cloud*  
+**Repo :** `https://github.com/rudydesplan/P09_cloud_infra_redpanda_spark`
 
-# Projet 9 - Exercice 2 : POC Pipeline ETL Temps Réel (Redpanda & Spark Streaming)
+---
 
-Ce projet est une Preuve de Concept (POC) d'un pipeline ETL (Extract, Transform, Load) en temps réel. Il simule l'ingestion de tickets de support client, les traite en continu pour enrichir les données et calculer des agrégations complexes, et stocke les métriques résultantes sous format JSON, simulant un chargement vers un Data Lake (S3).
+### Exercice 1 — Infrastructure hybride (design cloud + SI existant)
 
-## 📑 Vue d'ensemble
+### Contexte
+Une organisation souhaite moderniser son système data en s’appuyant sur le cloud, tout en conservant une partie de son SI existant (on-prem / legacy). L’enjeu est de concevoir une **architecture hybride** réaliste, sécurisée et exploitable, qui prend en compte les contraintes d’intégration (réseau, IAM, gouvernance, coûts et exploitation).
 
-Le but de ce pipeline est de transformer un flux brut d'événements (tickets de support) en métriques exploitables pour l'analyse métier (BI), avec une latence faible (micro-batchs de 30 secondes).
+### Objectif
+- Concevoir une **architecture cloud hybride** intégrable à un SI existant, en justifiant les choix de composants (stockage, entrepôt, streaming, sécurité) et les flux.
+- Produire un **schéma d’architecture** clair : connexions, circulation des données, zones de sécurité, points de synchronisation, protocoles de transfert.
+- Vérifier l’adéquation aux contraintes : **scalabilité**, **résilience**, **gouvernance**, **coûts**, **exploitation** (run/monitoring).
 
-### Technologies clés
+### Démarche
+- **Cadrage** : identification des sources, des consommateurs, des exigences (sécurité, volumétrie, latence, SLA).
+- **Choix des composants** : stockage objet, entrepôt, streaming, IAM, réseau, secrets, monitoring (avec justification).
+- **Définition des flux** : ingestion (batch/stream), transformations, exposition, gestion des accès et chiffrement.
+- **Architecture réseau & sécurité** : segmentation, règles d’accès, principes du moindre privilège, gestion des secrets.
+- **Run & observabilité** : logs, métriques, alertes, points de reprise, stratégie incident.
+- **Analyse des risques & coûts** : SPOF, dépendances, points de contention, estimation qualitative des coûts (stockage, transfert, compute).
 
-- **Docker & Docker Compose :** Orchestration des conteneurs pour un déploiement facile.
-- **Python (Faker & Confluent Kafka) :** Génération de données synthétiques et production vers le bus d'événements.
-- **Redpanda Cloud :** Plateforme de streaming d'événements compatible Kafka (utilisée ici en mode SaaS).
-- **PySpark Structured Streaming :** Moteur de traitement de données en temps réel pour le nettoyage, l'enrichissement et l'agrégation.
+### Outils
+- Outils de diagrammes : **Mermaid**, draw.io, Lucidchart *(selon le choix)*
+- Référentiels cloud **AWS / Azure / GCP** :
+  - stockage objet, entrepôt, IAM, réseau (VPC/VNet), secrets,
+  - monitoring/observabilité (metrics/logs/traces)
 
-## 🏗️ Architecture
+### Compétences démontrées
+- Conception d’architecture cloud/hybride (composants, flux, responsabilités)
+- Sécurité & gouvernance : IAM, segmentation réseau, secrets, chiffrement, accès
+- Pensée “run” : observabilité, résilience, gestion incident, SPOF/blast radius
+- Justification technique : trade-offs coûts/performance/simplicité/réversibilité
 
-L'architecture, conçue pour être déployée sur AWS (ECS Fargate, S3), est simulée localement via Docker Compose.
+### Résultats & valeur ajoutée (ce que ça apporte)
+- Une architecture hybride **documentée et défendable**, prête à être présentée à une DSI/équipe infra.
+- Une vision claire des flux et des responsabilités (où vont les données, qui accède, comment c’est monitoré).
+- Un socle de décision pour lancer une implémentation (MVP infra) avec priorités et risques identifiés.
 
-*(Note : L'implémentation actuelle dépose les fichiers JSON localement, simulant l'étape "Write Metrics" vers S3).*
+### Recul (apprentissage clé)
+- Le design “cloud” n’est pas qu’une liste de services : ce qui fait la différence, c’est la **sécurité des flux**, la **gestion des identités**, la **réversibilité**, et la **capacité d’exploitation** (observabilité + procédures).
+- Les schémas doivent être orientés “run” : qui accède à quoi, où sont les logs, quels sont les SPOF, et comment limiter le blast radius en cas d’incident.
 
-**Flux de données :**
+---
 
-1. **Producteur (Ingest) :** Un script Python génère des tickets de support aléatoires (JSON) et les envoie de manière sécurisée (SASL/SSL) vers un topic `client_tickets` sur Redpanda Cloud.
-2. **Hub de Streaming :** Redpanda Cloud reçoit et met en mémoire tampon les messages.
-3. **Consommateur & Traitement (Subscribe & Process) :**
-   - Spark Structured Streaming s'abonne au topic Redpanda.
-   - Toutes les **30 secondes** (trigger micro-batch), Spark traite les nouvelles données.
-   - **Transformations :** Conversion de timestamps, extraction de date/heure, mapping des équipes de support, calcul des SLA (Service Level Agreement) et scoring de priorité.
-   - **Agrégations :** Calcul de métriques complexes (total, par heure, par jour, par type, par équipe, moyennes/médianes des SLA, etc.).
-4. **Stockage (Write) :** À la fin de chaque micro-batch, un fichier JSON contenant toutes les métriques agrégées est écrit dans un volume local partagé.
+### Exercice 2 — Streaming + traitement (Redpanda + PySpark + export)
 
-```mermaid
-graph LR
-    %% Main AWS Cloud Boundary
-    subgraph AWS_Cloud["AWS Cloud (eu-central-1)"]
-        style AWS_Cloud fill:#F2F3F3,stroke:#232F3E,stroke-width:2px
+### Contexte
+Dans un contexte orienté événements (tickets clients, logs applicatifs, transactions), l’organisation souhaite capter des données en temps (quasi) réel via une plateforme de streaming. L’objectif est de rendre opérationnel un pipeline complet : **production d’événements → ingestion streaming → traitement Spark → export** et documentation, avec une stack reproductible.
 
-        %% VPC Boundary
-        subgraph VPC["VPC"]
-            style VPC fill:#E6F2F8,stroke:#007CBC,stroke-width:3px
+### Objectif
+- Mettre en place un système de **streaming** opérationnel (Redpanda) avec un topic (ex. `client_tickets`) et un producteur (Python) pour générer/ingérer des événements.
+- Développer un traitement **PySpark** (consommation Kafka/Redpanda), appliquer des transformations (nettoyage, typage, agrégations) et produire un dataset exploitable.
+- Exporter les résultats (JSON/Parquet/CSV) et rendre le tout **reproductible** (Dockerfile(s) + docker-compose).
+- Documenter l’ensemble : architecture, commandes d’exécution, démo/captures, et schéma (Mermaid intégré au README).
 
-            %% Private Subnet Boundary
-            subgraph Private_Subnet["Private Subnet (Processing & Producers)"]
-                style Private_Subnet fill:none,stroke:#007CBC,stroke-width:2px,stroke-dasharray: 5 5
-                Producer["Amazon ECS<br>Fargate Task<br>(Producer)"]
-                Consumer["Amazon ECS<br>Spark Streaming<br>(Consumer)"]
-            end
+### Démarche
+- **Mise en place Redpanda** :
+  - démarrage de la stack,
+  - création du topic,
+  - vérification publish/consume.
+- **Producer Python** :
+  - génération d’événements structurés,
+  - envoi au topic,
+  - logs et gestion des erreurs.
+- **Traitement PySpark** :
+  - lecture du flux (Kafka API),
+  - parsing/typage, nettoyage, enrichissement,
+  - agrégations (KPI, stats), et écriture vers un sink.
+- **Export** :
+  - écriture en JSON/CSV/Parquet (selon besoin),
+  - validation (comptages, schéma output, contrôles simples).
+- **Reproductibilité & documentation** :
+  - docker-compose (broker + producer + Spark/job + stockage),
+  - README : commandes, architecture, schéma Mermaid, preuves (captures/démo).
 
-            %% Redpanda Cloud (External Service)
-            Redpanda["Redpanda Cloud<br>Kafka Topic:<br>client_tickets"]
-        end
-    end
+### Outils
+- **Redpanda** (Kafka API compatible) : topics, producer/consumer
+- **Python** (producer, génération d’événements)
+- **PySpark** (traitements, agrégations, writing sink)
+- **Docker / Docker Compose** (reproductibilité de la stack)
+- **Formats** : JSON / Parquet / CSV (selon le besoin)
+- **Documentation** : Mermaid + README
 
-    %% Data Storage & Analytics Boundary
-    subgraph Data_Storage_Analytics["Data Storage & Analytics"]
-        style Data_Storage_Analytics fill:#E6F2F8,stroke:#3F8624,stroke-width:2px,stroke-dasharray: 5 5
-        S3["Amazon S3<br>Bucket: metrics<br>(JSON)"]
-        Analytics["QuickSight / Athena<br>Dashboards<br>(Consumption)"]
-    end
+### Compétences démontrées
+- Mise en place d’une chaîne streaming end-to-end (producer → broker → consumer/processing)
+- Traitement distribué Spark : parsing, transformations, agrégations, output
+- Robustesse pipeline : logs, validation output, reproductibilité Docker
+- Bonnes pratiques streaming : offsets, idempotence (concepts), contrats d’événements (schéma)
 
-    %% Data Flow Connections
-    Producer -->|"1. Ingest (SASL/SSL)<br>JSON: ticket_id..."| Redpanda
-    Redpanda -->|"2. Subscribe<br>(Micro-batch 30s)"| Consumer
-    Consumer -->|"3. Write Metrics<br>(JSON files)"| S3
-    S3 -->|"4. Read/Query"| Analytics
+### Résultats & valeur ajoutée (ce que ça apporte)
+- Un pipeline streaming fonctionnel et **rejouable** localement (stack Docker) pour démontrer une architecture temps réel.
+- Un dataset agrégé exploitable (export) pouvant alimenter BI ou stockage analytique.
+- Une documentation claire pour permettre à une équipe de reprendre et étendre (nouveaux topics, nouveaux consumers, nouveaux sinks).
 
-    %% Define styles for nodes
-    class Producer,Consumer ecs;
-    class S3 s3;
-    class Analytics analytics;
-    class Redpanda redpanda;
-
-    classDef ecs fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:white,font-weight:bold;
-    classDef s3 fill:#3F8624,stroke:#232F3E,stroke-width:2px,color:white,font-weight:bold;
-    classDef analytics fill:#693CC5,stroke:#232F3E,stroke-width:2px,color:white,font-weight:bold;
-    classDef redpanda fill:#C9211E,stroke:#232F3E,stroke-width:2px,color:white,font-weight:bold;
-```
-
-
-
-## 📂 Structure du Projet
-
-Bash
-
-```
-.
-├── docker-compose.yml       # Orchestration des services Producer et Spark
-├── Pipeline Diagram.png     # Diagramme visuel de l'architecture
-├── producer/                # Dossier du conteneur Producteur
-│   ├── Dockerfile           # Définition de l'image Docker du producteur
-│   ├── producer_redpanda.py # Script Python de génération et d'envoi des tickets
-│   └── requirements.txt     # Dépendances Python (confluent-kafka, faker)
-└── spark/                   # Dossier du conteneur Spark
-    ├── Dockerfile           # Définition de l'image Docker Spark (avec connecteurs Kafka)
-    ├── traitement_spark.py  # Script PySpark de streaming et d'agrégation
-    └── ticket_metrics_json/ # DOSSIER DE SORTIE : contient les fichiers JSON générés
-```
-
-## 🚀 Installation et Utilisation (Docker Compose)
-
-### Prérequis
-
-- Docker et Docker Compose installés sur votre machine.
-- Une connexion Internet active (les conteneurs doivent se connecter à Redpanda Cloud externe).
-
-### Instructions de démarrage
-
-1. **Cloner ou télécharger** ce dépôt sur votre machine.
-
-2. **Ouvrir un terminal** à la racine du projet (là où se trouve `docker-compose.yml`).
-
-3. **Construire les images Docker :**
-
-   Bash
-
-   ```
-   docker-compose build
-   ```
-
-4. **Démarrer le pipeline :**
-
-   Bash
-
-   ```
-   docker-compose up
-   ```
-
-> **Note sur le démarrage :** Le service `producer` est configuré pour attendre que le service `spark` soit "healthy" (opérationnel et capable de se connecter à Redpanda) avant de démarrer. Il est normal de voir des logs d'attente au début.
-
-Pour arrêter le pipeline proprement : Faites `CTRL+C` dans le terminal, puis exécutez `docker-compose down`.
-
-## ✅ Preuve de Fonctionnalité
-
-Comment vérifier que le pipeline fonctionne correctement ?
-
-### 1. Vérification des Logs (Terminal)
-
-- **Logs du Producteur (`ticket_producer`) :** Vous verrez des messages indiquant l'envoi de tickets en continu.
-
-  Plaintext
-
-  ```
-  ticket_producer | Produced: {'ticket_id': '...', 'priority': 'high', ...}
-  ticket_producer | 📨 Delivered to client_tickets [0] @ offset 12345
-  ```
-
-- **Logs de Spark (`spark_stream_processor`) :** Toutes les 30 secondes, vous verrez le démarrage d'un micro-batch et la confirmation de l'écriture du fichier JSON.
-
-  Plaintext
-
-  ```
-  spark_stream_processor | ...
-  spark_stream_processor | [✓] JSON metrics written → /tmp/ticket_metrics_json/batch_00042.json
-  ```
-
-### 2. Vérification des Sorties (Fichiers JSON)
-
-La preuve ultime du fonctionnement est la génération des fichiers de métriques.
-
-1. Pendant que le pipeline tourne, naviguez dans votre explorateur de fichiers vers le dossier du projet : `spark/ticket_metrics_json/`.
-2. Vous verrez apparaître de nouveaux fichiers `batch_XXXXX.json` toutes les ~30 secondes.
-3. **Ouvrez un de ces fichiers.** Il contiendra la structure agrégée définie dans le script Spark, par exemple :
-
-JSON
-
-```
-{
-    "batch_id": 42,
-    "total_tickets": 150,
-    "tickets_per_hour": [
-        {"hour": 10, "tickets_per_hour": 45},
-        {"hour": 11, "tickets_per_hour": 105}
-    ],
-    "by_team": [
-        {"support_team": "Security Ops Center", "count_by_support_team": 12},
-        {"support_team": "Team Tech 1", "count_by_support_team": 80}
-        // ... autres équipes
-    ],
-    "sla_mean": 24.5,
-    "sla_median": 4.0,
-    "priority_score_mean": 2.8,
-    // ... autres métriques
-}
-```
-
-La présence et le contenu de ces fichiers confirment que les données sont ingérées, transformées, agrégées et stockées avec succès.
+### Recul (apprentissage clé)
+- La difficulté réelle du streaming est l’**opérationnel** : gestion des offsets, idempotence, schema evolution, erreurs de parsing, et observabilité (logs/métriques).
+- Le bon réflexe : définir tôt des **contrats d’événements** (schéma, champs obligatoires, types) pour éviter une dette technique côté Spark (casts fragiles, valeurs incohérentes).
+- Dockeriser chaque brique (broker, producer, job spark, stockage) accélère énormément la validation et la revue (même environnement pour tout le monde).

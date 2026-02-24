@@ -1,6 +1,6 @@
 ## P8 — Construire & tester une infrastructure data (Airbyte, Mongo/DocumentDB, monitoring)  
 **Titre :** *Construisez et testez une infrastructure de données*  
-**Repo :** `https://github.com/rudydesplan/P08_data_infra_testing`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P08_data_infra_testing`
 
 ### Contexte
 Une DSI souhaite mettre en place une infrastructure de gestion de données **fiable** et **contrôlable**, intégrant des contraintes opérationnelles : déploiement reproductible (Docker), stockage NoSQL managé (AWS DocumentDB / MongoDB), ingestion automatisée (Airbyte), et surtout une logique de **tests** et de **monitoring** permettant de valider que l’infrastructure est réellement exploitable (disponibilité, qualité, réplication).

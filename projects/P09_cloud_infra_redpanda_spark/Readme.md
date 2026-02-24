@@ -1,6 +1,6 @@
 ## P9 — Modéliser une infrastructure cloud + streaming (Redpanda) + PySpark  
 **Titre :** *Modélisez une infrastructure dans le cloud*  
-**Repo :** `https://github.com/rudydesplan/P09_cloud_infra_redpanda_spark`
+**Repo :** `https://github.com/rudydesplan/data_engineer_openclassrooms/projects/P09_cloud_infra_redpanda_spark`
 
 ---
 
@@ -99,3 +99,4 @@ Dans un contexte orienté événements (tickets clients, logs applicatifs, trans
 - La difficulté réelle du streaming est l’**opérationnel** : gestion des offsets, idempotence, schema evolution, erreurs de parsing, et observabilité (logs/métriques).
 - Le bon réflexe : définir tôt des **contrats d’événements** (schéma, champs obligatoires, types) pour éviter une dette technique côté Spark (casts fragiles, valeurs incohérentes).
 - Dockeriser chaque brique (broker, producer, job spark, stockage) accélère énormément la validation et la revue (même environnement pour tout le monde).
+
